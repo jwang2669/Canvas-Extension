@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Oil On Canvas",
+  "version": "1.0",
+  "description": "AI-powered assistant for Canvas LMS",
+  "icons": {
+    "48": "logo.png"
+  },
+  "action": {
+    "default_popup": "src/popup.html"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://canvas.wisc.edu/*"],
+      "js": ["src/content.jsx"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["logo.png"],
+      "matches": ["https://canvas.wisc.edu/*"]
+    }
+  ],
+  "permissions": ["scripting"],
+  "host_permissions": ["<all_urls>"]
+}
