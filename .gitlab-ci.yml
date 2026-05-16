@@ -1,0 +1,120 @@
+stages:
+  - lint
+  - test
+  - build
+
+variables:
+  GRADLE_USER_HOME: '$CI_PROJECT_DIR/.gradle'
+
+format_check:
+  stage: lint
+  image: node:20
+  cache:
+    key: 'root-node-${CI_COMMIT_REF_SLUG}'
+    paths:
+      - node_modules
+    policy: pull-push
+  script:
+    - npm ci
+    - npm run format:check
+
+backend_lint:
+  stage: lint
+  image: eclipse-temurin:17-jdk
+  cache:
+    key: 'gradle-${CI_COMMIT_REF_SLUG}'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+      - apps/backend/.gradle
+    policy: pull-push
+  before_script:
+    - chmod +x apps/backend/gradlew
+  script:
+    - cd apps/backend
+    - ./gradlew check -x test
+  allow_failure: true
+
+backend_test:
+  stage: test
+  image: eclipse-temurin:17-jdk
+  services:
+    - name: mysql:8.0
+      alias: mysql
+  variables:
+    MYSQL_DATABASE: ooc_test
+    MYSQL_USER: ooc
+    MYSQL_PASSWORD: oocpass
+    MYSQL_ROOT_PASSWORD: rootpass
+    MYSQL_PORT: '3306'
+    SPRING_DATASOURCE_URL: 'jdbc:mysql://mysql:3306/ooc_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC'
+    SPRING_DATASOURCE_USERNAME: ooc
+    SPRING_DATASOURCE_PASSWORD: oocpass
+  cache:
+    key: 'gradle-${CI_COMMIT_REF_SLUG}'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+      - apps/backend/.gradle
+    policy: pull-push
+  before_script:
+    - chmod +x apps/backend/gradlew
+  script:
+    - cd apps/backend
+    - ./gradlew clean test --no-daemon
+  allow_failure: true
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+    - when: never
+  artifacts:
+    when: always
+    expire_in: 1 week
+    paths:
+      - apps/backend/build/reports/tests/test
+      - apps/backend/build/test-results/test
+    reports:
+      junit:
+        - apps/backend/build/test-results/test/*.xml
+
+backend_build:
+  stage: build
+  image: eclipse-temurin:17-jdk
+  cache:
+    key: 'gradle-${CI_COMMIT_REF_SLUG}'
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+      - apps/backend/.gradle
+    policy: pull-push
+  before_script:
+    - chmod +x apps/backend/gradlew
+  script:
+    - cd apps/backend
+    - ./gradlew clean jar -x test --no-daemon
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - apps/backend/build/libs/*.jar
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+frontend_build:
+  stage: build
+  image: node:20
+  cache:
+    key: 'node-${CI_COMMIT_REF_SLUG}'
+    paths:
+      - apps/chrome-extension/node_modules
+    policy: pull-push
+  script:
+    - cd apps/chrome-extension
+    - npm ci
+    - npm run build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - apps/chrome-extension/build
+      - apps/chrome-extension/dist
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'

@@ -1,0 +1,52 @@
+.DS_Store
+*.zip
+Thumbs.db
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.iml
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+
+# Node / JavaScript
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+dist/
+build/
+
+# Prettier
+.prettiercache
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+# Gradle wrapper jar must be committed so others can run ./gradlew without installing Gradle
+!apps/backend/gradle/wrapper/gradle-wrapper.jar
+
+# Logs
+*.log
+
+# Environment / secrets
+.env
+*.env.local
+
+# Temporary files
+*.tmp
+*.swp
+*.bak
+format
+
+# Generated documentation
+docs/_build/

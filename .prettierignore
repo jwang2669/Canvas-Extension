@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+target/
+*.min.js
+*.min.css
+
+# Lock files (avoid formatting)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Git
+.git/
+
+# IDE / generated
+.idea/
+.vscode/
+*.iml
+
+# Logs, cache
+*.log
+.cache/
+
+# Assets (optional: uncomment if you don't want to format these)
+# *.png
+# *.jpg
+# *.ico
