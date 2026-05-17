@@ -8,7 +8,7 @@ Also, be sure to check out the Wiki for information on how to maintain your team
 
 ### Project Abstract
 
-We'll build a browser extension that provides features for Canvas users, particularly students. Our main goal is to make Canvas easier to use for students by better organizing canvas assignments, providing a task manager, and generally improving Canvas UX for students. The part I focus more on is the backend testing and database testing.
+We'll build a browser extension that provides features for Canvas users, particularly students. Our main goal is to make Canvas easier to use for students by better organizing canvas assignments, providing a task manager, and generally improving Canvas UX for students. The part I focus more on is the Canvas OAUTH implementation, backend testing and database testing.
 
 <!--A one paragraph summary of what the software will do.-->
 
