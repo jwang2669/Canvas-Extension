@@ -1,0 +1,45 @@
+# Docker compose file for the project
+services:
+  mysql:
+    build:
+      context: ../db
+    image: ooc-mysql
+    container_name: ooc_mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - '${MYSQL_PORT}:3306'
+    volumes:
+      - ooc_mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-p${MYSQL_ROOT_PASSWORD}']
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  backend:
+    build:
+      context: ../apps/backend
+    image: ooc-backend
+    container_name: ooc_backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SERVER_PORT: 8080
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      CANVAS_BASE_URL: ${CANVAS_BASE_URL}
+      CANVAS_ACCESS_TOKEN: ${CANVAS_ACCESS_TOKEN}
+    ports:
+      - '${BACKEND_PORT}:8080'
+volumes:
+  ooc_mysql_data:

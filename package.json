@@ -1,0 +1,17 @@
+{
+  "name": "project-15",
+  "private": true,
+  "description": "Monorepo root — shared tooling (Prettier, etc.). Apps: apps/backend, apps/extension.",
+  "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "backend:run": "cd apps/backend && ./run.sh"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
+  },
+  "dependencies": {
+    "@instructure/ui-buttons": "^10.30.0",
+    "@instructure/ui-img": "^10.30.0"
+  }
+}
